@@ -1,0 +1,13 @@
+{
+  "name": "risk-code-tool",
+  "description": "Tool to check sentiment in source code, to look for negative/risky development practices",
+  "version": "0.0.1",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "glob": "^7.1.2",
+    "sentiment": "^5.0.1"
+  }
+}
