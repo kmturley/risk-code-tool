@@ -22,7 +22,7 @@ Running the tool:
 
 ## Example output
 
-    ![Alt text](/examples/screenshot.png?raw=true "examples/css/stylesheet.css:1 example stylesheet")
+![Alt text](/examples/screenshot.png?raw=true "examples/css/stylesheet.css:1 example stylesheet")
 
 ## Contact
 
