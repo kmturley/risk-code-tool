@@ -3,11 +3,15 @@
   "description": "Tool to check sentiment in source code, to look for negative/risky development practices",
   "version": "0.0.1",
   "license": "MIT",
+  "bin": {
+    "risk": "./index.js"
+  },
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
     "glob": "^7.1.2",
+    "minimist": "^1.2.0",
     "sentiment": "^5.0.1"
   }
 }

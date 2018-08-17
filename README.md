@@ -7,11 +7,15 @@ Tool to check sentiment in source code, to look for negative/risky development p
 
 ## Installation
 
-    npm install
+Install the cli:
+
+    npm install -g
 
 ## Usage
 
-    npm start
+Running the tool:
+
+    risk --path=examples/**/*.* --log=-3
 
 ## Contact
 
