@@ -22,14 +22,7 @@ Running the tool:
 
 ## Example output
 
-    examples/css/stylesheet.css:1 example stylesheet
-    examples/css/stylesheet.css:3 bad
-    examples/css/stylesheet.css:4 background red
-    examples/javascript.js:1 This is annoying
-    examples/javascript.js:3 function badComments
-    examples/javascript.js:4 console log This is the worst
-    examples/css/stylesheet.css:7 I hate this code
-
+    ![Alt text](/examples/screenshot.png?raw=true "examples/css/stylesheet.css:1 example stylesheet")
 
 ## Contact
 
