@@ -7,14 +7,12 @@ var readline = require('readline');
 var Sentiment = require('sentiment');
 var sentiment = new Sentiment();
 var pjson = require('./package.json');
-var files = [];
 
 var log = 0;
 var path = '**/*.*';
 var colorGreen = '\x1b[32m%s\x1b[0m';
 var colorYellow = '\x1b[33m%s\x1b[0m';
 var colorRed = '\x1b[31m%s\x1b[0m';
-
 
 if (argv.path) {
   path = argv.path;
@@ -24,44 +22,70 @@ if (argv.log) {
   log = argv.log;
 }
 
+console.log(`------`);
 console.log(`Risk Code Tool v${pjson.version}`);
-console.log('argv', argv);
-console.log('path', path);
-console.log('log', log);
+console.log(`------`);
 
-function outputScore(index, line) {
-  files[index].sanitized = line.replace('.', ' ').replace('(', ' ').replace(/[^a-zA-Z ]/g, '').trim();
-  files[index].analyzed = sentiment.analyze(files[index].sanitized);
-  files[index].line += 1;
-  if (files[index].sanitized.length > 0 && files[index].analyzed.score <= log) {
-    var color = colorGreen;
-    if (files[index].analyzed.score <= -3) {
-      color = colorRed;
-    } else if (files[index].analyzed.score <= 0) {
-      color = colorYellow;
-    }
-    console.log(color, `${files[index].path}:${files[index].line} ${files[index].sanitized}`);
-  }
-}
-
-function loadFiles(folder) {
-  files = [];
-  glob(folder, function (er, paths) {
+function searchFiles(pattern) {
+  var promises = [];
+  var totalLines = 0;
+  var totalLinesFailed = 0;
+  glob(pattern, function (error, paths) {
     paths.forEach(function(path, index) {
-      files[index] = {
-        analyzed: {},
-        path: path,
-        line: 0,
-      };
-      var lineReader = readline.createInterface({
-        input: fs.createReadStream(path)
-      });
-      lineReader.on('line', function(line) {
-        outputScore(index, line);
-      });
+      promises.push(new Promise((resolve) => {
+        var file = {
+          path: path,
+          total: 0,
+          lines: []
+        };
+        var lineReader = readline.createInterface({
+          input: fs.createReadStream(path)
+        });
+        lineReader.on('line', function(line) {
+          file.total += 1;
+          totalLines += 1;
+          var line = {
+            sanitized: line.replace('.', ' ').replace('(', ' ').replace(/[^a-zA-Z ]/g, '').trim(),
+            analyzed: null,
+            num: file.total
+          };
+          line.analyzed = sentiment.analyze(line.sanitized);
+          if (line.sanitized.length > 0 && line.analyzed.score <= log) {
+            totalLinesFailed += 1;
+            file.lines.push(line);
+          }
+        });
+        lineReader.on('close', function() {
+          resolve(file);
+        });
+      }));
     });
-    console.log(`${paths.length} files scanned`);
+    Promise.all(promises).then(function(results) {
+      results.forEach(function(file) {
+        file.lines.forEach(function(line) {
+          var color = colorGreen;
+          if (line.analyzed.score <= -3) {
+            color = colorRed;
+          } else if (line.analyzed.score <= 0) {
+            color = colorYellow;
+          }
+          console.log(color, `${file.path}:${line.num} ${line.sanitized}`);
+        });
+      });
+      console.log(`------`);
+      console.log(`Pattern used: ${pattern}`);
+      console.log(`Log level: ${log}`);
+      console.log(`Files scanned: ${paths.length}`);
+      console.log(`Lines scanned: ${totalLines}`);
+      console.log(`Lines failed: ${totalLinesFailed}`);
+      console.log(`------`);
+      if (totalLinesFailed > 0) {
+        process.exit(1); // fails the tests
+      } else {
+        process.exit(0); // passes the tests
+      }
+    });
   });
-}
+};
 
-loadFiles(path);
+searchFiles(path);

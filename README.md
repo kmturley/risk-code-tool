@@ -17,7 +17,7 @@ Install the cli:
 
 Running the tool:
 
-    risk --path=examples/**/*.* --log=-3
+    risk --path='examples/**/*(*.js|*.css|*.scss|*.html|*.py)' --log=-3
 
 
 ## Example output

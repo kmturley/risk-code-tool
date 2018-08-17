@@ -1,7 +1,7 @@
 {
   "name": "risk-code-tool",
   "description": "Tool to check sentiment in source code, to look for negative/risky development practices",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "bin": {
     "risk": "./index.js"
